@@ -1,6 +1,9 @@
+import { auth } from "@clerk/nextjs/server";
 import UploadForm from "@/components/UploadForm";
 
-const Page = () => {
+const Page = async () => {
+    await auth.protect();
+
     return (
         <main className="new-book">
             <section className="flex flex-col gap-5 text-center">
