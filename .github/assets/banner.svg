@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 340" width="1200" height="340" role="img" aria-label="Readorix — turn any PDF into a conversation you can hear">
+  <title>Readorix — turn any PDF into a conversation you can hear</title>
+
+  <!-- Dark theme: background #1a1918, foreground #f7f4ee, brand #c8553d -->
+  <rect width="1200" height="340" fill="#1a1918"/>
+
+  <!-- Decorative arcs bleeding off the right edge, in the secondary tone -->
+  <g fill="none" stroke="#2d2a26" stroke-width="3" stroke-linecap="round">
+    <path d="M1010 340 A150 150 0 0 1 1310 340"/>
+    <path d="M1060 340 A100 100 0 0 1 1260 340"/>
+    <path d="M1110 340 A50 50 0 0 1 1210 340"/>
+  </g>
+
+  <!-- Brand mark: the app icon, unscaled from its 32-unit grid -->
+  <g transform="translate(90,88) scale(5.5)">
+    <g fill="none" stroke="#c8553d" stroke-width="2.4" stroke-linecap="round">
+      <path d="M11.6 12.7 A5.5 5.5 0 0 1 20.4 12.7"/>
+      <path d="M7.2 9.4 A11 11 0 0 1 24.8 9.4"/>
+    </g>
+    <path d="M16 19.5 C13.2 17.6 9.4 17.1 5 17.5 L5 26 C9.4 25.6 13.2 26.1 16 27.5 C18.8 26.1 22.6 25.6 27 26 L27 17.5 C22.6 17.1 18.8 17.6 16 19.5 Z"
+          fill="#f7f4ee"/>
+    <path d="M16 19.5 L16 27.5" stroke="#1a1918" stroke-width="1.4" stroke-linecap="round"/>
+  </g>
+
+  <text x="300" y="170" font-family="Georgia, 'Times New Roman', serif" font-size="82" font-weight="bold" fill="#f7f4ee">Readorix</text>
+  <path d="M302 196 L392 196" stroke="#c8553d" stroke-width="4" stroke-linecap="round"/>
+  <text x="300" y="238" font-family="Helvetica Neue, Arial, sans-serif" font-size="27" fill="#c9c2b6">Turn any PDF into a conversation you can hear.</text>
+  <text x="300" y="274" font-family="Helvetica Neue, Arial, sans-serif" font-size="21" fill="#8a847a">Upload a book &#183; let AI read it &#183; talk to it out loud</text>
+</svg>

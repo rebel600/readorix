@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 290" width="1200" height="290" role="img" aria-label="How Readorix works: upload a PDF, AI segments it, then talk to your book">
+  <title>How Readorix works</title>
+
+  <rect width="1200" height="290" fill="#f8f4e9"/>
+
+  <!-- Step 1 — Upload -->
+  <g>
+    <rect x="40" y="45" width="340" height="200" rx="16" fill="#fff6e5" stroke="#e0d6bd" stroke-width="2"/>
+    <circle cx="80" cy="87" r="19" fill="#212a3b"/>
+    <text x="80" y="94" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="20" font-weight="bold" fill="#f8f4e9">1</text>
+    <g transform="translate(296,68)" stroke="#c8553d" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M6 2 H26 L36 12 V38 H6 Z"/>
+      <path d="M26 2 V12 H36"/>
+      <path d="M21 32 V17 M15 23 L21 17 L27 23"/>
+    </g>
+    <text x="66" y="152" font-family="Georgia, serif" font-size="29" font-weight="bold" fill="#212a3b">Upload a PDF</text>
+    <text x="66" y="187" font-family="Helvetica Neue, Arial, sans-serif" font-size="19" fill="#6b6559">Drop in any book. It streams</text>
+    <text x="66" y="213" font-family="Helvetica Neue, Arial, sans-serif" font-size="19" fill="#6b6559">straight to blob storage.</text>
+  </g>
+
+  <path d="M398 145 L418 145 M410 137 L418 145 L410 153" stroke="#c8a87c" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Step 2 — Process -->
+  <g>
+    <rect x="430" y="45" width="340" height="200" rx="16" fill="#fff6e5" stroke="#e0d6bd" stroke-width="2"/>
+    <circle cx="470" cy="87" r="19" fill="#212a3b"/>
+    <text x="470" y="94" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="20" font-weight="bold" fill="#f8f4e9">2</text>
+    <g transform="translate(686,68)" stroke="#c8553d" stroke-width="2.6" stroke-linecap="round">
+      <path d="M4 24 V16 M12 24 V8 M20 24 V2 M28 24 V12 M36 24 V19"/>
+      <path d="M2 34 H38" stroke-width="2"/>
+    </g>
+    <text x="456" y="152" font-family="Georgia, serif" font-size="29" font-weight="bold" fill="#212a3b">AI reads it</text>
+    <text x="456" y="187" font-family="Helvetica Neue, Arial, sans-serif" font-size="19" fill="#6b6559">Text is split into segments</text>
+    <text x="456" y="213" font-family="Helvetica Neue, Arial, sans-serif" font-size="19" fill="#6b6559">and stored for retrieval.</text>
+  </g>
+
+  <path d="M788 145 L808 145 M800 137 L808 145 L800 153" stroke="#c8a87c" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Step 3 — Talk -->
+  <g>
+    <rect x="820" y="45" width="340" height="200" rx="16" fill="#fff6e5" stroke="#e0d6bd" stroke-width="2"/>
+    <circle cx="860" cy="87" r="19" fill="#212a3b"/>
+    <text x="860" y="94" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="20" font-weight="bold" fill="#f8f4e9">3</text>
+    <g transform="translate(1076,66)" stroke="#c8553d" stroke-width="2.6" fill="none" stroke-linecap="round">
+      <rect x="14" y="2" width="12" height="21" rx="6"/>
+      <path d="M7 18 A13 13 0 0 0 33 18"/>
+      <path d="M20 31 V38"/>
+    </g>
+    <text x="846" y="152" font-family="Georgia, serif" font-size="29" font-weight="bold" fill="#212a3b">Talk to it</text>
+    <text x="846" y="187" font-family="Helvetica Neue, Arial, sans-serif" font-size="19" fill="#6b6559">Ask questions out loud and</text>
+    <text x="846" y="213" font-family="Helvetica Neue, Arial, sans-serif" font-size="19" fill="#6b6559">hear the book answer back.</text>
+  </g>
+</svg>
