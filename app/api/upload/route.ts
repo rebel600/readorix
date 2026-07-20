@@ -1,0 +1,47 @@
+import { auth } from '@clerk/nextjs/server';
+import { handleUpload, type HandleUploadBody } from '@vercel/blob/client';
+import {
+    ACCEPTED_IMAGE_TYPES,
+    ACCEPTED_PDF_TYPES,
+    MAX_FILE_SIZE,
+} from '@/lib/constants';
+
+export async function POST(request: Request) {
+    const body = (await request.json()) as HandleUploadBody;
+
+    try {
+        const jsonResponse = await handleUpload({
+            body,
+            request,
+            onBeforeGenerateToken: async () => {
+                const { userId } = await auth();
+
+                if (!userId) {
+                    throw new Error('Unauthorized');
+                }
+
+                return {
+                    allowedContentTypes: [
+                        ...ACCEPTED_PDF_TYPES,
+                        ...ACCEPTED_IMAGE_TYPES,
+                    ],
+                    maximumSizeInBytes: MAX_FILE_SIZE,
+                    addRandomSuffix: true,
+                    tokenPayload: JSON.stringify({ userId }),
+                };
+            },
+            onUploadCompleted: async () => {
+                // The book record is created client-side after upload resolves.
+            },
+        });
+
+        return Response.json(jsonResponse);
+    } catch (error) {
+        console.error('[/api/upload]', error);
+
+        return Response.json(
+            { error: (error as Error).message },
+            { status: 400 },
+        );
+    }
+}

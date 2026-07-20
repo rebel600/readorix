@@ -2,26 +2,28 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { shadcn } from "@clerk/ui/themes";
 import Navbar from "@/components/Navbar";
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, IBM_Plex_Serif, IBM_Plex_Mono } from "next/font/google";
+import { IBM_Plex_Serif, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
+import { Toaster } from "@/components/ui/sonner";
 
 const ibmPlexSerif = IBM_Plex_Serif({
   variable: "--font-ibm-plex-serif",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
   display: "swap",
-})
+});
 
 const monoSans = IBM_Plex_Mono({
   variable: "--font-ibm-plex-mono",
   subsets: ["latin"],
   weight: ["400", "500", "600", "700"],
   display: "swap",
-})
+});
 
 export const metadata: Metadata = {
   title: "Readorix",
-  description: "Transform your books into immersive audio experiences with Readorix. Upload PDFs, and chat with your books using voice. Our AI-powered platform converts your favorite books into captivating audio formats, allowing you to enjoy literature like never before. Whether you're on the go or relaxing at home, Readorix brings stories to life through sound.",
+  description:
+    "Transform your books into immersive audio experiences with Readorix. Upload PDFs, and chat with your books using voice. Our AI-powered platform converts your favorite books into captivating audio formats, allowing you to enjoy literature like never before. Whether you're on the go or relaxing at home, Readorix brings stories to life through sound.",
 };
 
 export default function RootLayout({
@@ -39,6 +41,7 @@ export default function RootLayout({
           <Navbar />
           <main className="wrapper pt-(--navbar-height)">{children}</main>
         </ClerkProvider>
+        <Toaster />
       </body>
     </html>
   );
