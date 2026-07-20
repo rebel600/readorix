@@ -125,6 +125,8 @@
   --navbar-height: 74px;
 }
 
+/* Dark theme — warm brown-black grounds with cream text and a terracotta
+   accent, the counterpart to the light theme's cream-and-ink warmth. */
 .dark {
   --background: #1a1918;
   --foreground: #f7f4ee;
@@ -160,6 +162,37 @@
 
   /* Brand color - terracotta */
   --blue: #c8553d;
+
+  /* Warm Literary Backgrounds */
+  --bg-primary: #1a1918;
+  --bg-secondary: #2d2a26;
+  --bg-tertiary: #252321;
+  --bg-card: #252321;
+
+  /* Warm Text Colors */
+  --text-primary: #f7f4ee;
+  --text-secondary: #c9c2b6;
+  --text-muted: #8a847a;
+
+  /* Warm Accent */
+  --accent-warm: #f7f4ee;
+  --accent-warm-hover: #c9c2b6;
+  --accent-light: #2d2a26;
+
+  /* Borders */
+  --border-subtle: rgba(247, 244, 238, 0.1);
+  --border-medium: rgba(247, 244, 238, 0.2);
+
+  /* Shadows need more weight to register against a dark ground */
+  --shadow-soft-sm: 0 1px 2px rgba(0, 0, 0, 0.3), 0 1px 3px rgba(0, 0, 0, 0.4);
+  --shadow-soft: 0 1px 3px rgba(0, 0, 0, 0.3), 0 4px 12px rgba(0, 0, 0, 0.45);
+  --shadow-soft-md: 0 2px 4px rgba(0, 0, 0, 0.3), 0 8px 16px rgba(0, 0, 0, 0.45);
+  --shadow-soft-lg: 0 4px 12px rgba(0, 0, 0, 0.4), 0 16px 32px rgba(0, 0, 0, 0.5);
+  --shadow-book: 0px 10px 30px 0px rgba(0, 0, 0, 0.5);
+
+  /* Brand accent - terracotta reads better than warm brown on dark */
+  --color-brand: #c8553d;
+  --color-brand-hover: #d96a52;
 }
 
 @layer base {
@@ -277,7 +310,7 @@
     font-family: 'IBM Plex Serif', serif;
   }
   .btn-secondary {
-    @apply inline-flex items-center justify-center px-6 py-3 bg-white hover:bg-gray-50 text-(--text-secondary) font-medium rounded-[10px] transition-colors;
+    @apply inline-flex items-center justify-center px-6 py-3 bg-(--bg-card) hover:bg-(--bg-tertiary) text-(--text-secondary) font-medium rounded-[10px] transition-colors;
   }
 
   /* Layout utilities */
@@ -293,13 +326,13 @@
     @apply border-(--color-brand);
   }
   .page-title-xl {
-    @apply text-4xl md:text-5xl font-semibold text-black tracking-[-0.02em] leading-13.5 font-serif;
+    @apply text-4xl md:text-5xl font-semibold text-(--text-primary) tracking-[-0.02em] leading-13.5 font-serif;
   }
   .section-title {
-    @apply text-2xl md:text-[30px] font-semibold text-black leading-7.5 font-serif;
+    @apply text-2xl md:text-[30px] font-semibold text-(--text-primary) leading-7.5 font-serif;
   }
   .book-title-lg {
-    @apply text-[30px] font-semibold text-black leading-9 mb-2 font-serif;
+    @apply text-[30px] font-semibold text-(--text-primary) leading-9 mb-2 font-serif;
   }
   .subtitle {
     @apply text-xl text-(--text-secondary) leading-7;
@@ -312,7 +345,7 @@
      NAVBAR COMPONENT
      =========================================== */
   .logo-text {
-    @apply font-semibold text-xl hidden sm:block text-black;
+    @apply font-semibold text-xl hidden sm:block text-(--text-primary);
   }
   .nav-link-base {
     @apply text-base font-medium leading-6 transition-all;
@@ -321,13 +354,22 @@
     @apply text-(--color-brand) border-b-2 border-(--color-brand) pb-0.5;
   }
   .nav-btn {
-    @apply text-base font-medium text-black hover:opacity-70 transition-opacity cursor-pointer;
+    @apply text-base font-medium text-(--text-primary) hover:opacity-70 transition-opacity cursor-pointer;
   }
   .nav-user-link {
     @apply flex items-center gap-1 hover:opacity-70 transition-opacity;
   }
   .nav-user-name {
-    @apply hidden sm:inline text-base font-medium text-black;
+    @apply hidden sm:inline text-base font-medium text-(--text-primary);
+  }
+  .theme-toggle {
+    @apply relative inline-flex items-center justify-center size-9 rounded-full cursor-pointer
+           text-(--text-primary) hover:bg-(--bg-secondary)
+           focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring
+           transition-colors;
+  }
+  .theme-toggle-icon {
+    @apply absolute size-5 transition-all duration-300;
   }
 
   /* ===========================================
@@ -406,10 +448,10 @@
     @apply absolute -bottom-1 -right-1 sm:-bottom-2 sm:-right-2;
   }
   .vapi-pulse-ring {
-    @apply absolute inset-0 w-12.5 h-12.5 sm:w-15 sm:h-15 bg-white rounded-full opacity-50 animate-ping;
+    @apply absolute inset-0 w-12.5 h-12.5 sm:w-15 sm:h-15 bg-(--bg-card) rounded-full opacity-50 animate-ping;
   }
   .vapi-mic-btn {
-    @apply relative w-12.5 h-12.5 sm:w-15 sm:h-15 cursor-pointer rounded-full flex items-center justify-center transition-all duration-300 border-0 bg-white;
+    @apply relative w-12.5 h-12.5 sm:w-15 sm:h-15 cursor-pointer rounded-full flex items-center justify-center transition-all duration-300 border-0 bg-(--bg-card);
 
     &:hover {
       transform: scale(1.05);
@@ -428,17 +470,17 @@
     @apply bg-[#212a3b];
   }
   .vapi-mic-btn-inactive {
-    @apply bg-white;
+    @apply bg-(--bg-card);
   }
   .vapi-badge-ai {
-    @apply inline-block bg-white px-3 py-2 rounded-lg;
+    @apply inline-block bg-(--bg-card) px-3 py-2 rounded-lg;
   }
   .vapi-badge-ai-text {
     @apply text-sm font-medium text-[#212a3b];
     font-family: 'IBM Plex Serif', serif;
   }
   .vapi-status-indicator {
-    @apply flex items-center gap-2 bg-white px-3 py-2 rounded-lg;
+    @apply flex items-center gap-2 bg-(--bg-card) px-3 py-2 rounded-lg;
   }
   .vapi-status-dot {
     @apply inline-block w-3 h-3 rounded-full;
@@ -466,17 +508,17 @@
     font-family: 'IBM Plex Serif', serif;
   }
   .vapi-stat-box {
-    @apply bg-white rounded-[10px] px-2.5 py-5 min-w-56.25 text-center;
+    @apply bg-(--bg-card) rounded-[10px] px-2.5 py-5 min-w-56.25 text-center;
   }
   .vapi-stat-box-sm {
-    @apply bg-white rounded-[10px] px-2.5 py-5 min-w-56.25 text-center;
+    @apply bg-(--bg-card) rounded-[10px] px-2.5 py-5 min-w-56.25 text-center;
   }
   .vapi-stat-label {
     @apply text-lg font-medium text-[#212a3b] mb-3;
     font-family: 'IBM Plex Serif', serif;
   }
   .vapi-stat-value-lg {
-    @apply text-[30px] font-semibold text-black leading-9;
+    @apply text-[30px] font-semibold text-(--text-primary) leading-9;
     font-family: 'IBM Plex Serif', serif;
   }
   .vapi-stat-value-sm {
@@ -487,7 +529,7 @@
      BOOKS LIBRARY COMPONENT
      =========================================== */
   .library-hero-card {
-    @apply bg-[#f3e4c7] rounded-[14px] p-5 md:p-6 lg:py-6 lg:px-10 relative overflow-hidden flex items-center;
+    @apply bg-[#f3e4c7] dark:bg-(--bg-secondary) rounded-[14px] p-5 md:p-6 lg:py-6 lg:px-10 relative overflow-hidden flex items-center;
   }
   .library-hero-content {
     @apply flex flex-col items-center text-center lg:items-center lg:text-left lg:flex-row lg:justify-between gap-4 lg:gap-6 w-full;
@@ -496,10 +538,10 @@
     @apply flex-1 max-w-full lg:max-w-100 flex flex-col gap-3 lg:gap-4 items-center lg:items-start justify-center z-10;
   }
   .library-hero-title {
-    @apply text-[26px] md:text-3xl lg:text-4xl font-semibold text-black tracking-[-0.02em] leading-8 md:leading-10.5 font-serif;
+    @apply text-[26px] md:text-3xl lg:text-4xl font-semibold text-(--text-primary) tracking-[-0.02em] leading-8 md:leading-10.5 font-serif;
   }
   .library-hero-description {
-    @apply text-sm md:text-base text-[#3d485e] leading-5 md:leading-6;
+    @apply text-sm md:text-base text-[#3d485e] dark:text-(--text-secondary) leading-5 md:leading-6;
   }
   .library-hero-illustration {
     @apply flex items-center justify-center mt-2 lg:hidden;
@@ -507,26 +549,28 @@
   .library-hero-illustration-desktop {
     @apply hidden lg:flex items-center justify-center flex-1 max-w-100;
   }
+  /* In dark mode both CTAs adopt the brand-brown fill of .form-btn on
+     /books/new, so the primary action looks the same on every screen. */
   .library-cta-primary {
-    @apply inline-flex items-center justify-center gap-2 bg-white text-(--text-primary) px-5 py-3 rounded-[10px] font-bold text-base md:text-xl transition-all w-full lg:w-fit;
+    @apply inline-flex items-center justify-center gap-2 bg-(--bg-card) text-(--text-primary) dark:bg-[#663820] dark:text-white px-5 py-3 rounded-[10px] font-bold text-base md:text-xl transition-all w-full lg:w-fit;
     font-family: 'IBM Plex Serif', serif;
 
     &:hover {
-      @apply bg-gray-50;
+      @apply bg-(--bg-tertiary) dark:bg-[#7a4528];
       box-shadow: var(--shadow-soft);
     }
   }
   .library-cta-secondary {
-    @apply inline-flex items-center gap-2 bg-white text-(--text-primary) px-5 py-3 rounded-[10px] font-bold text-xl transition-all;
+    @apply inline-flex items-center gap-2 bg-(--bg-card) text-(--text-primary) dark:bg-[#663820] dark:text-white px-5 py-3 rounded-[10px] font-bold text-xl transition-all;
     font-family: 'IBM Plex Serif', serif;
 
     &:hover {
-      @apply bg-gray-50;
+      @apply bg-(--bg-tertiary) dark:bg-[#7a4528];
       box-shadow: var(--shadow-soft);
     }
   }
   .library-steps-card {
-    @apply bg-white p-4 rounded-[10px];
+    @apply bg-(--bg-card) p-4 rounded-[10px];
     list-style: none;
   }
   .library-steps-card div {
@@ -537,16 +581,16 @@
     list-style: none;
   }
   .library-step-number {
-    @apply w-8 h-8 min-w-8 min-h-8 rounded-full bg-[#fff6e5] border border-(--text-primary) text-(--text-primary) flex items-center justify-center font-semibold text-sm;
+    @apply w-8 h-8 min-w-8 min-h-8 rounded-full bg-[#fff6e5] dark:bg-(--bg-secondary) border border-(--text-primary) text-(--text-primary) flex items-center justify-center font-semibold text-sm;
   }
   .library-step-title {
-    @apply font-semibold text-base text-[#222c37] leading-6;
+    @apply font-semibold text-base text-[#222c37] dark:text-(--text-primary) leading-6;
   }
   .library-step-description {
-    @apply font-normal text-sm text-[#222c37] leading-5;
+    @apply font-normal text-sm text-[#222c37] dark:text-(--text-secondary) leading-5;
   }
   .library-search-wrapper {
-    @apply flex items-center bg-white border border-(--border-subtle) rounded-lg overflow-hidden w-full sm:w-80;
+    @apply flex items-center bg-(--bg-card) border border-(--border-subtle) rounded-lg overflow-hidden w-full sm:w-80;
   }
   .library-search-input {
     @apply flex-1 py-2 px-4 outline-none text-(--text-primary) placeholder:text-(--text-muted);
@@ -562,7 +606,7 @@
      TRANSCRIPT COMPONENT
      =========================================== */
   .transcript-container {
-    @apply w-full bg-white rounded-[14px] h-full min-h-0 flex flex-col;
+    @apply w-full bg-(--bg-card) rounded-[14px] h-full min-h-0 flex flex-col;
   }
   .transcript-messages {
     @apply flex flex-col gap-4 sm:gap-6 p-4 sm:p-6 flex-1 overflow-y-auto scroll-smooth;
@@ -632,7 +676,7 @@
     @apply bg-(--accent-light) border-(--accent-warm);
   }
   .voice-selector-option-default {
-    @apply bg-white;
+    @apply bg-(--bg-card);
 
     &:hover {
       @apply bg-(--bg-secondary);
@@ -662,7 +706,7 @@
     @apply absolute -left-1 top-2 bottom-2 w-3 bg-linear-to-r from-[#8B7355] to-[#A08060] rounded-l-md z-0;
   }
   .book-card-cover-wrapper {
-    @apply relative bg-white rounded-[14px] overflow-hidden flex items-center justify-center h-51.25 md:h-60;
+    @apply relative bg-(--bg-card) rounded-[14px] overflow-hidden flex items-center justify-center h-51.25 md:h-60;
   }
   .book-card-cover {
     @apply w-auto h-42.5 md:h-50 object-cover rounded-lg;
@@ -672,41 +716,43 @@
     @apply mt-4 md:mt-5 flex-1 flex flex-col gap-1;
   }
   .book-card-title {
-    @apply font-bold text-[#212a3b] line-clamp-1 text-base md:text-xl leading-5.5 md:leading-7.5;
+    @apply font-bold text-[#212a3b] dark:text-(--text-primary) line-clamp-1 text-base md:text-xl leading-5.5 md:leading-7.5;
     font-family: 'IBM Plex Serif', serif;
   }
   .book-card-author {
-    @apply text-sm md:text-base font-medium text-[#3d485e] line-clamp-1;
+    @apply text-sm md:text-base font-medium text-[#3d485e] dark:text-(--text-secondary) line-clamp-1;
   }
 
   /* ===========================================
      UPLOAD FORM COMPONENT
      =========================================== */
   .upload-dropzone {
-    @apply flex flex-col items-center justify-center h-41.25 bg-white rounded-[6px] cursor-pointer transition-all;
+    @apply flex flex-col items-center justify-center h-41.25 bg-(--bg-card) rounded-[6px] cursor-pointer transition-all;
 
     &:hover {
-      @apply bg-gray-50;
+      @apply bg-(--bg-tertiary);
     }
   }
   .upload-dropzone-uploaded {
-    @apply bg-[#f3e4c7];
+    @apply bg-[#f3e4c7] dark:bg-(--bg-secondary);
 
     .upload-dropzone-text {
-      @apply text-[#663820];
+      /* #663820 is the brand brown; on a dark ground it needs the lighter
+         terracotta to stay legible. */
+      @apply text-[#663820] dark:text-[#e0a08a];
     }
     .upload-dropzone-hint {
-      @apply text-[#8B7355];
+      @apply text-[#8B7355] dark:text-(--text-secondary);
     }
   }
   .upload-dropzone-icon {
-    @apply w-12 h-12 mb-2 text-[#8B7355];
+    @apply w-12 h-12 mb-2 text-[#8B7355] dark:text-(--text-secondary);
   }
   .upload-dropzone-text {
-    @apply text-[#777] text-lg font-medium text-center;
+    @apply text-[#777] dark:text-(--text-primary) text-lg font-medium text-center;
   }
   .upload-dropzone-hint {
-    @apply text-[#777] text-sm mt-1;
+    @apply text-[#777] dark:text-(--text-secondary) text-sm mt-1;
   }
   .upload-dropzone-remove {
     @apply flex items-center justify-center w-6 h-6 text-red-500 transition-colors cursor-pointer;
@@ -716,17 +762,19 @@
     }
   }
   .form-label {
-    @apply text-lg font-medium text-black mb-2 block;
+    @apply text-lg font-medium text-(--text-primary) mb-2 block;
   }
   .form-input {
-    @apply w-full p-4 bg-white rounded-lg text-lg font-medium text-[#222] placeholder:text-[#999];
+    /* text-[#222] on --bg-card renders near-invisible once the card goes dark,
+       so the typed value needs an explicit dark counterpart. */
+    @apply w-full p-4 bg-(--bg-card) rounded-lg text-lg font-medium text-[#222] dark:text-(--text-primary) placeholder:text-[#999] dark:placeholder:text-(--text-muted);
   }
 
   /* ===========================================
      BACK BUTTON (FLOATING)
      =========================================== */
   .back-btn-floating {
-    @apply fixed top-24 left-6 z-50 size-12 rounded-full bg-white border border-(--border-subtle) flex items-center justify-center transition-all;
+    @apply fixed top-24 left-6 z-50 size-12 rounded-full bg-(--bg-card) border border-(--border-subtle) flex items-center justify-center transition-all;
     box-shadow: var(--shadow-soft);
 
     &:hover {

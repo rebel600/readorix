@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 import { IBM_Plex_Serif, IBM_Plex_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
+import ThemeProvider from "@/components/theme-provider";
 
 const ibmPlexSerif = IBM_Plex_Serif({
   variable: "--font-ibm-plex-serif",
@@ -35,13 +36,23 @@ export default function RootLayout({
     <html
       lang="en"
       className={`${ibmPlexSerif.variable} ${monoSans.variable} relative font-sans h-full antialiased`}
+      suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col">
-        <ClerkProvider appearance={{ theme: shadcn }}>
-          <Navbar />
-          <main className="wrapper pt-(--navbar-height)">{children}</main>
-        </ClerkProvider>
-        <Toaster />
+        {/* next-themes writes the theme class onto <html> before React hydrates,
+            which is why suppressHydrationWarning is set above. */}
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <ClerkProvider appearance={{ theme: shadcn }}>
+            <Navbar />
+            <main className="wrapper pt-(--navbar-height)">{children}</main>
+          </ClerkProvider>
+          <Toaster />
+        </ThemeProvider>
       </body>
     </html>
   );
