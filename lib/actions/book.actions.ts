@@ -6,7 +6,7 @@ import {escapeRegex, generateSlug, serializeData} from "@/lib/utils";
 import Book from "@/database/models/book.model";
 import BookSegment from "@/database/models/book-segment.model";
 import mongoose from "mongoose";
-import {getUserPlan} from "@/lib/subscription-server";
+import {auth} from "@clerk/nextjs/server";
 
 export const getAllBooks = async (search?: string) => {
     try {
@@ -81,29 +81,24 @@ export const createBook = async (data: CreateBook) => {
             }
         }
 
-        // Todo: Check subscription limits before creating a book
-        const { getUserPlan } = await import("@/lib/subscription-server");
-        const { PLAN_LIMITS } = await import("@/lib/subscription-constants");
-
-        const { auth } = await import("@clerk/nextjs/server");
-        const { userId } = await auth();
+        // The authoritative limit check. The page and /api/upload check the same
+        // quota earlier to avoid wasted work, but this is the one that decides —
+        // it is the only check a client cannot skip, and it closes the race
+        // between those earlier checks and the insert below.
+        const { getBookQuota } = await import("@/lib/subscription-server");
+        const { userId, plan, maxBooks, allowed } = await getBookQuota();
 
         if (!userId || userId !== data.clerkId) {
             return { success: false, error: "Unauthorized" };
         }
 
-        const plan = await getUserPlan();
-        const limits = PLAN_LIMITS[plan];
-
-        const bookCount = await Book.countDocuments({ clerkId: userId });
-
-        if (bookCount >= limits.maxBooks) {
+        if (!allowed) {
             const { revalidatePath } = await import("next/cache");
             revalidatePath("/");
 
             return {
                 success: false,
-                error: `You have reached the maximum number of books allowed for your ${plan} plan (${limits.maxBooks}). Please upgrade to add more books.`,
+                error: `You have reached the maximum number of books allowed for your ${plan} plan (${maxBooks}). Please upgrade to add more books.`,
                 isBillingError: true,
             };
         }
@@ -116,6 +111,35 @@ export const createBook = async (data: CreateBook) => {
         }
     } catch (e) {
         console.error('Error creating a book', e);
+
+        return {
+            success: false,
+            error: (e as Error).message,
+        }
+    }
+}
+
+// Best-effort cleanup for uploads that were written to blob storage before a
+// later step failed. Without this, an aborted upload leaks paid storage that
+// nothing references.
+export const deleteUploadedBlobs = async (urls: string[]) => {
+    try {
+        const { userId } = await auth();
+
+        if (!userId) {
+            return { success: false, error: "Unauthorized" };
+        }
+
+        if (urls.length === 0) {
+            return { success: true };
+        }
+
+        const { del } = await import("@vercel/blob");
+        await del(urls);
+
+        return { success: true };
+    } catch (e) {
+        console.error('Error deleting uploaded blobs', e);
 
         return {
             success: false,
@@ -146,11 +170,19 @@ export const getBookBySlug = async (slug: string) => {
     }
 }
 
-export const saveBookSegments = async (bookId: string, clerkId: string, segments: TextSegment[]) => {
+// Segments are sent in batches so no single Server Action request exceeds the
+// body size limit. `totalSegments` is passed only on the final batch, which is
+// what marks the book as fully ingested.
+export const saveBookSegments = async (
+    bookId: string,
+    clerkId: string,
+    segments: TextSegment[],
+    totalSegments?: number,
+) => {
     try {
         await connectToDatabase();
 
-        console.log('Saving book segments...');
+        console.log(`Saving ${segments.length} book segments...`);
 
         const segmentsToInsert = segments.map(({ text, segmentIndex, pageNumber, wordCount }) => ({
             clerkId, bookId, content: text, segmentIndex, pageNumber, wordCount
@@ -158,7 +190,9 @@ export const saveBookSegments = async (bookId: string, clerkId: string, segments
 
         await BookSegment.insertMany(segmentsToInsert);
 
-        await Book.findByIdAndUpdate(bookId, { totalSegments: segments.length });
+        if (totalSegments !== undefined) {
+            await Book.findByIdAndUpdate(bookId, { totalSegments });
+        }
 
         console.log('Book segments saved successfully.');
 

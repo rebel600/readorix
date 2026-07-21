@@ -15,10 +15,39 @@ import VoiceSelector from './VoiceSelector';
 import LoadingOverlay from './LoadingOverlay';
 import {useAuth, useUser} from "@clerk/nextjs";
 import { toast } from 'sonner';
-import {checkBookExists, createBook, saveBookSegments} from "@/lib/actions/book.actions";
+import {checkBookExists, createBook, deleteUploadedBlobs, saveBookSegments} from "@/lib/actions/book.actions";
 import {useRouter} from "next/navigation";
 import {parsePDFFile} from "@/lib/utils";
 import {upload} from "@vercel/blob/client";
+import type {TextSegment} from "@/types";
+
+// Server Actions cap the request body (1MB by default), so a book's segments are
+// split into batches well under that. Segment text length varies a lot between
+// PDFs, so batches are sized by payload bytes rather than segment count.
+const MAX_BATCH_BYTES = 700_000;
+
+const batchSegments = (segments: TextSegment[]): TextSegment[][] => {
+    const batches: TextSegment[][] = [];
+    let batch: TextSegment[] = [];
+    let batchBytes = 0;
+
+    for (const segment of segments) {
+        const size = JSON.stringify(segment).length;
+
+        if (batch.length > 0 && batchBytes + size > MAX_BATCH_BYTES) {
+            batches.push(batch);
+            batch = [];
+            batchBytes = 0;
+        }
+
+        batch.push(segment);
+        batchBytes += size;
+    }
+
+    if (batch.length > 0) batches.push(batch);
+
+    return batches;
+};
 
 const UploadForm = () => {
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -50,6 +79,11 @@ const UploadForm = () => {
 
         // PostHog -> Track Book Uploads...
 
+        // Tracked so anything already written to blob storage can be removed if a
+        // later step fails, instead of being left behind unreferenced.
+        const uploadedBlobUrls: string[] = [];
+        let succeeded = false;
+
         try {
             const existsCheck = await checkBookExists(data.title);
 
@@ -76,6 +110,8 @@ const UploadForm = () => {
                 contentType: 'application/pdf'
             });
 
+            uploadedBlobUrls.push(uploadedPdfBlob.url);
+
             let coverUrl: string;
 
             if(data.coverImage) {
@@ -86,6 +122,7 @@ const UploadForm = () => {
                     contentType: coverFile.type
                 });
                 coverUrl = uploadedCoverBlob.url;
+                uploadedBlobUrls.push(coverUrl);
             } else {
                 const response = await fetch(parsedPDF.cover)
                 const blob = await response.blob();
@@ -96,6 +133,7 @@ const UploadForm = () => {
                     contentType: 'image/png'
                 });
                 coverUrl = uploadedCoverBlob.url;
+                uploadedBlobUrls.push(coverUrl);
             }
 
             const book = await createBook({
@@ -124,12 +162,25 @@ const UploadForm = () => {
                 return;
             }
 
-            const segments = await saveBookSegments(book.data._id, userId, parsedPDF.content);
+            const batches = batchSegments(parsedPDF.content);
 
-            if(!segments.success) {
-                toast.error("Failed to save book segments");
-                throw new Error("Failed to save book segments");
+            for (let i = 0; i < batches.length; i++) {
+                const isLastBatch = i === batches.length - 1;
+
+                const segments = await saveBookSegments(
+                    book.data._id,
+                    userId,
+                    batches[i],
+                    isLastBatch ? parsedPDF.content.length : undefined,
+                );
+
+                if(!segments.success) {
+                    toast.error("Failed to save book segments");
+                    throw new Error("Failed to save book segments");
+                }
             }
+
+            succeeded = true;
 
             form.reset();
             router.push('/');
@@ -138,6 +189,12 @@ const UploadForm = () => {
 
             toast.error("Failed to upload book. Please try again later.");
         } finally {
+            // Covers every unsuccessful exit — thrown errors and the early
+            // returns for billing limits and duplicate titles alike.
+            if (!succeeded && uploadedBlobUrls.length > 0) {
+                await deleteUploadedBlobs(uploadedBlobUrls);
+            }
+
             setIsSubmitting(false);
         }
     };

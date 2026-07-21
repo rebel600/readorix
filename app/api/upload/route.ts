@@ -5,6 +5,7 @@ import {
     ACCEPTED_PDF_TYPES,
     MAX_FILE_SIZE,
 } from '@/lib/constants';
+import { getBookQuota } from '@/lib/subscription-server';
 
 export async function POST(request: Request) {
     const body = (await request.json()) as HandleUploadBody;
@@ -18,6 +19,17 @@ export async function POST(request: Request) {
 
                 if (!userId) {
                     throw new Error('Unauthorized');
+                }
+
+                // Without this a user at their book limit could still mint upload
+                // tokens and write to blob storage indefinitely — the book insert
+                // would fail later, but the bytes (and the bill) would remain.
+                const { allowed, plan, maxBooks } = await getBookQuota();
+
+                if (!allowed) {
+                    throw new Error(
+                        `You have reached the maximum number of books allowed for your ${plan} plan (${maxBooks}).`,
+                    );
                 }
 
                 return {
