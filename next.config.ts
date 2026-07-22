@@ -15,6 +15,10 @@ const nextConfig: NextConfig = {
         hostname: "covers.openlibrary.org",
         pathname: "/b/**",
       },
+      {
+        protocol: "https",
+        hostname: "sopdwsdk8oaho5ci.public.blob.vercel-storage.com",
+      },
     ],
   },
 };
