@@ -1,9 +1,37 @@
+import { timingSafeEqual } from 'node:crypto';
+
 import { NextResponse } from 'next/server';
 
 import { searchBookSegments } from '@/lib/actions/book.actions';
 
+// This route is reachable by anyone on the internet — clerkMiddleware() in
+// proxy.ts only makes auth() available, it does not gate the request, and a
+// voice agent has no Clerk session to present anyway. Vapi instead sends the
+// shared secret configured on the assistant's server tool as X-Vapi-Secret.
+// Without this check, guessing a bookId reads any user's book back verbatim.
+function isAuthorizedVapiRequest(request: Request) {
+    const expected = process.env.VAPI_SERVER_SECRET;
+    const provided = request.headers.get('x-vapi-secret');
+
+    // Fail closed: an unset secret must not turn the endpoint into an open one.
+    if (!expected || !provided) {
+        return false;
+    }
+
+    const a = Buffer.from(provided);
+    const b = Buffer.from(expected);
+
+    return a.length === b.length && timingSafeEqual(a, b);
+}
+
 // Helper function to process book search logic
 async function processBookSearch(bookId: unknown, query: unknown) {
+    // Call payloads carry session metadata and raw transcribed speech, so the
+    // request is never logged whole, and even the narrowed form stays in dev.
+    if (process.env.NODE_ENV !== 'production') {
+        console.log('Vapi search-book request:', { bookId, query });
+    }
+
     // Validate inputs before conversion to prevent null/undefined becoming "null"/"undefined" strings
     if (bookId == null || query == null || query === '') {
         return { result: 'Missing bookId or query' };
@@ -47,10 +75,13 @@ function parseArgs(args: unknown): Record<string, unknown> {
 }
 
 export async function POST(request: Request) {
+    // Before the body is read, and well before anything touches the database.
+    if (!isAuthorizedVapiRequest(request)) {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
     try {
         const body = await request.json();
-
-        console.log('Vapi search-book request:', JSON.stringify(body, null, 2));
 
         // Support multiple Vapi formats
         const functionCall = body?.message?.functionCall;

@@ -5,6 +5,12 @@ const Page = async () => {
   
   const bookResults = await getAllBooks();
 
+  // An empty grid and a failed query look identical to the user, so the reason
+  // has to reach the server log or the outage is invisible.
+  if (!bookResults.success) {
+    console.error('Failed to load books for the home page:', bookResults.error);
+  }
+
   const books = bookResults.success ? bookResults.data ?? [] : [];
 
   return (

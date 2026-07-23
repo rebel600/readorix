@@ -21,6 +21,9 @@ export default async function BookDetailsPage({
   const result = await getBookBySlug(slug);
 
   if (!result.success || !result.data) {
+    // The redirect is silent to the user; without this a genuine database
+    // failure is indistinguishable from a slug that simply does not exist.
+    console.error(`Failed to load book "${slug}":`, result.error);
     redirect("/");
   }
 

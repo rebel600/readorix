@@ -2,7 +2,7 @@
   "permissions": {
     "allow": [
       "Bash(git commit *)",
-      "Bash(node -p \"require\\('./node_modules/next/package.json'\\).version\")"
+      "Bash(node -p \"require('./node_modules/next/package.json').version\")"
     ]
   }
 }
