@@ -1,14 +1,24 @@
 import BookCard from "@/components/BookCard";
 import HeroSection from "@/components/HeroSection";
-import { sampleBooks } from "@/lib/constants";
+import { getAllBooks } from "@/lib/actions/book.actions";
+const Page = async () => {
+  
+  const bookResults = await getAllBooks();
 
-const Page = () => {
+  // An empty grid and a failed query look identical to the user, so the reason
+  // has to reach the server log or the outage is invisible.
+  if (!bookResults.success) {
+    console.error('Failed to load books for the home page:', bookResults.error);
+  }
+
+  const books = bookResults.success ? bookResults.data ?? [] : [];
+
   return (
     <main className="wrapper">
       <HeroSection />
 
       <div className="library-books-grid">
-        {sampleBooks.map((book) => (
+        {books.map((book) => (
           <BookCard
             key={book.slug}
             title={book.title}
@@ -17,6 +27,7 @@ const Page = () => {
             slug={book.slug}
           />
         ))}
+
       </div>
     </main>
   );

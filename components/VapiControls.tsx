@@ -71,7 +71,7 @@ const VapiControls = ({ book }: { book: IBook }) => {
                                 {isActive ? (
                                     <Mic className="size-7 text-white" />
                                 ) : (
-                                    <MicOff className="size-7 text-[#212a3b]" />
+                                    <MicOff className="size-7 text-(--text-primary)" />
                                 )}
                             </button>
                         </div>
@@ -79,10 +79,10 @@ const VapiControls = ({ book }: { book: IBook }) => {
 
                     <div className="flex flex-col gap-4 flex-1">
                         <div>
-                            <h1 className="text-2xl sm:text-3xl font-bold font-serif text-[#212a3b] mb-1">
+                            <h1 className="text-2xl sm:text-3xl font-bold font-serif text-(--text-primary) mb-1">
                                 {book.title}
                             </h1>
-                            <p className="text-[#3d485e] font-medium">by {book.author}</p>
+                            <p className="text-(--text-secondary) font-medium">by {book.author}</p>
                         </div>
 
                         <div className="flex flex-wrap gap-3">
