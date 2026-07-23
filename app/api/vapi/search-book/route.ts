@@ -68,10 +68,19 @@ export async function GET() {
 // Parse tool arguments that may arrive as a JSON string or an object
 function parseArgs(args: unknown): Record<string, unknown> {
     if (!args) return {};
+
+    let parsed: unknown = args;
+
     if (typeof args === 'string') {
-        try { return JSON.parse(args); } catch { return {}; }
+        try { parsed = JSON.parse(args); } catch { return {}; }
     }
-    return args as Record<string, unknown>;
+
+    // "null" and "5" are valid JSON, so parsing can succeed and still hand back
+    // something without properties. Callers reach straight for .bookId, which
+    // throws on null — collapse anything that is not an object to {}.
+    if (typeof parsed !== 'object' || parsed === null) return {};
+
+    return parsed as Record<string, unknown>;
 }
 
 export async function POST(request: Request) {
