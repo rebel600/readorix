@@ -1,46 +1,35 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import { Input } from "@/components/ui/input";
 import { Search as SearchIcon } from "lucide-react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { searchBooks } from "@/lib/actions/book.actions";
 
-const Search = () => {
-  const searchParams = useSearchParams();
-  const router = useRouter();
-  const pathname = usePathname();
-
-  const [query, setQuery] = useState(searchParams.get("query") || "");
-
-  useEffect(() => {
-    const delayDebounceFn = setTimeout(() => {
-      const params = new URLSearchParams(window.location.search);
-
-      if (query) {
-        params.set("query", query);
-      } else {
-        params.delete("query");
-      }
-
-      router.push(`${pathname}?${params.toString()}`, { scroll: false });
-    }, 300);
-
-    return () => clearTimeout(delayDebounceFn);
-  }, [query, pathname, router]);
-
+// A plain server-action form: no "use client", no debounce, no client fetch.
+// Submitting (Enter or the icon button) navigates to /?query=… via the action's
+// redirect, so the search is shareable, bookmarkable, and works even without
+// JavaScript. `defaultValue` keeps the box in sync with the current URL.
+const Search = ({ query = "" }: { query?: string }) => {
   return (
-    <div className="library-search-wrapper">
-      <div className="pl-4">
-        <SearchIcon size={20} className="text-(--text-muted)" />
-      </div>
-      <Input
-        type="text"
-        placeholder="Search books by title or author"
+    <form action={searchBooks} role="search" className="library-search-wrapper">
+      <button
+        type="submit"
+        aria-label="Search books"
+        className="pl-4 flex items-center cursor-pointer"
+      >
+        <SearchIcon size={20} className="text-(--text-muted)" aria-hidden="true" />
+      </button>
+
+      <label htmlFor="book-search" className="sr-only">
+        Search books by title or author
+      </label>
+      <input
+        id="book-search"
+        type="search"
+        name="query"
+        defaultValue={query}
+        placeholder="Search by title or author"
+        autoComplete="off"
+        enterKeyHint="search"
         className="library-search-input border-none shadow-none focus-visible:ring-0"
-        value={query}
-        onChange={(e: any) => setQuery(e.target.value)}
       />
-    </div>
+    </form>
   );
 };
 

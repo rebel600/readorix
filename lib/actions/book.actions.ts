@@ -7,6 +7,7 @@ import Book from "@/database/models/book.model";
 import BookSegment from "@/database/models/book-segment.model";
 import mongoose from "mongoose";
 import {auth} from "@clerk/nextjs/server";
+import {redirect} from "next/navigation";
 
 export const getAllBooks = async (search?: string) => {
     try {
@@ -38,6 +39,20 @@ export const getAllBooks = async (search?: string) => {
         }
     }
 }
+
+// Form-driven search for the home page. The query lives in the URL (?query=)
+// rather than component state so results are shareable, survive a refresh, and
+// are produced by the same server render as the rest of the page (no debounce,
+// no client fetch). getAllBooks already escapes the term before building the
+// regex, so passing raw user input through here is safe.
+export const searchBooks = async (formData: FormData) => {
+    const rawQuery = formData.get("query");
+    const query = typeof rawQuery === "string" ? rawQuery.trim() : "";
+
+    // An empty query drops the param entirely so the URL stays clean and the
+    // page falls back to showing every book.
+    redirect(query ? `/?query=${encodeURIComponent(query)}` : "/");
+};
 
 export const checkBookExists = async (title: string) => {
     try {
