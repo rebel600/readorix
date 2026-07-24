@@ -28,19 +28,19 @@ It's built for the times reading isn't an option: commuting, walking, cooking, o
 
 ## Current status
 
-> **Early development.** The foundations work end to end; the reading experience is still being wired up.
+> **Active development.** The core loop — upload a book, open it, and talk to it — works end to end. Billing and polish are still in progress.
 
 | Area | State |
 |---|---|
 | Sign-in / sign-up (Clerk) | ✅ Working |
 | PDF upload → Vercel Blob | ✅ Working — client-side upload with scoped, server-issued tokens |
 | Book + segment persistence (MongoDB) | ✅ Schemas and server actions in place |
-| Library homepage | ⚠️ Renders a hardcoded `sampleBooks` list, not your uploads |
-| Book detail page (`/books/[slug]`) | ❌ Not built — book cards currently link to a 404 |
-| Voice conversation | ⚠️ `VapiControls`, `Transcript`, `VoiceSelector` and `useVapi` are written but not yet mounted on a route |
-| Subscriptions / billing | ⚠️ Constants and server guards exist; no checkout flow |
+| Library homepage | ✅ Working — lists your uploaded books, searchable by title or author |
+| Book detail page (`/books/[slug]`) | ✅ Working — renders the book with its voice controls |
+| Voice conversation | ✅ Working — `VapiControls` is mounted on `/books/[slug]`; the agent can search the book's text |
+| Subscriptions / billing | ⚠️ Constants and server guards exist; checkout flow in progress |
 
-If you're cloning this to try it: you can sign up and upload a book today, but you can't listen to one yet.
+If you're cloning this to try it: sign up, upload a book, open it from your library, and talk to it out loud.
 
 ---
 
@@ -116,11 +116,13 @@ npx skills add clerk/skills
 
 ```
 app/
+  page.tsx             Library homepage — lists your books, ?query= search
+  books/[slug]/        Book detail — mounts the Vapi voice controls
   (root)/books/new/    Upload page — guarded with auth.protect()
   api/upload/          Issues scoped Vercel Blob client-upload tokens
   sign-in/, sign-up/   Clerk catch-all routes
   icon.svg             App icon
-components/            UI + feature components (upload, voice, transcript)
+components/            UI + feature components (upload, voice, transcript, search)
   ui/                  shadcn primitives
 database/
   models/              Mongoose schemas: book, book-segment, voice-session
@@ -160,6 +162,6 @@ Every record is scoped by `clerkId`, so a user only ever reads their own library
 
 ## Contributing
 
-The most useful things to pick up right now are the gaps in the status table — particularly the `/books/[slug]` page, which is what unblocks the voice experience everything else is built to support.
+The most useful things to pick up right now are the remaining ⚠️ rows in the status table — particularly the subscriptions/checkout flow, plus polish on the voice reading experience.
 
 Branch off `main`, keep `npx tsc --noEmit` clean, and open a PR.
