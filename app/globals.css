@@ -847,37 +847,123 @@
   background-color: var(--bg-secondary) !important;
 }
 
-/* Pricing cards container */
-.clerk-pricing-table-wrapper {
-  padding: 0.5rem;
-  background: var(--bg-primary);
-}
+/* ============================================================
+   Pricing table — themed to the "Warm Literary" design system.
+   Every color is driven by a CSS variable that flips in .dark
+   (see :root / .dark above), so this single block covers both
+   light and dark mode. Scoped to .clerk-pricing-container, the
+   wrapper rendered on /subscriptions.
+   ============================================================ */
 
-/* Center all wrappers */
-.clerk-pricing-table-wrapper > div,
-.clerk-pricing-table-wrapper > div > div {
-  display: flex !important;
-  justify-content: center !important;
-  flex-wrap: wrap !important;
-  gap: 20px !important;
-}
-
-/* Individual cards */
-.clerk-pricing-table-wrapper > div > div > div {
+/* Card surface — warm card ground, subtle border, soft shadow */
+.clerk-pricing-container .cl-pricingTableCard {
   position: relative;
-  flex: 1 1 300px !important;
-  max-width: 400px !important;
-}
-
-/* Card styling - with soft shadow */
-.clerk-pricing-table-wrapper [class*='card'],
-.clerk-pricing-table-wrapper > div > div > div {
-  position: relative;
-  z-index: 1;
+  background-color: var(--bg-card) !important;
   border: 1px solid var(--border-subtle) !important;
   border-radius: 1rem !important;
-  background-color: white !important;
   box-shadow: var(--shadow-soft-md) !important;
+  transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+.clerk-pricing-container .cl-pricingTableCard:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-soft-lg) !important;
+}
+
+/* Inner sections sit directly on the card ground (Clerk's theme
+   sometimes paints its own background on these) */
+.clerk-pricing-container .cl-pricingTableCardHeader,
+.clerk-pricing-container .cl-pricingTableCardBody,
+.clerk-pricing-container .cl-pricingTableCardContent,
+.clerk-pricing-container .cl-pricingTableCardFooter {
+  background-color: transparent !important;
+}
+
+/* The highlighted / current plan gets a brand accent border
+   (warm brown in light, terracotta in dark) */
+.clerk-pricing-container .cl-pricingTableCard:has(.cl-pricingTableCardBadge) {
+  border: 2px solid var(--color-brand) !important;
+}
+
+/* Plan name + price — serif, primary ink */
+.clerk-pricing-container .cl-pricingTableCardTitle,
+.clerk-pricing-container .cl-pricingTableCardFee {
+  color: var(--text-primary) !important;
+  font-family: var(--font-ibm-plex-serif), serif !important;
+}
+
+.clerk-pricing-container .cl-pricingTableCardFee {
+  font-weight: 700 !important;
+}
+
+/* Secondary copy — period, notices, description */
+.clerk-pricing-container .cl-pricingTableCardFeePeriod,
+.clerk-pricing-container .cl-pricingTableCardFeePeriodNotice,
+.clerk-pricing-container .cl-pricingTableCardPeriodToggle,
+.clerk-pricing-container .cl-pricingTableCardDescription {
+  color: var(--text-muted) !important;
+}
+
+/* Feature list rows */
+.clerk-pricing-container .cl-pricingTableCardFeaturesListItem,
+.clerk-pricing-container .cl-pricingTableCardFeaturesListItemTitle,
+.clerk-pricing-container .cl-pricingTableCardFeaturesListItemContent {
+  color: var(--text-secondary) !important;
+}
+
+/* Feature check icons take the brand accent */
+.clerk-pricing-container .cl-pricingTableCardFeaturesListItem svg {
+  color: var(--color-brand) !important;
+}
+
+/* Brand badge ("Active" / "Popular") */
+.clerk-pricing-container .cl-pricingTableCardBadge {
+  background-color: var(--color-brand) !important;
+  color: #fff !important;
+  font-weight: 600 !important;
+  padding: 0.25rem 0.75rem !important;
+  border-radius: 9999px !important;
+}
+
+/* Subscribe CTA — brand fill with white text, readable in both modes.
+   Targets the footer button only so the period toggle is untouched. */
+.clerk-pricing-container .cl-pricingTableCardFooterButton {
+  height: 3rem !important;
+  min-height: 3rem !important;
+  font-size: 1.0625rem !important;
+  font-weight: 500 !important;
+  color: #fff !important;
+  background-color: var(--color-brand) !important;
+  border: none !important;
+  border-radius: 0.75rem !important;
+  box-shadow: var(--shadow-soft) !important;
+  text-transform: none !important;
+  transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+.clerk-pricing-container .cl-pricingTableCardFooterButton:hover {
+  background-color: var(--color-brand-hover) !important;
+  box-shadow: var(--shadow-soft-md) !important;
+  transform: translateY(-1px);
+}
+
+/* Current-plan CTA (disabled) — muted, still legible */
+.clerk-pricing-container .cl-pricingTableCardFooterButton:disabled,
+.clerk-pricing-container .cl-pricingTableCardFooterButton[aria-disabled='true'] {
+  background-color: var(--bg-secondary) !important;
+  color: var(--text-primary) !important;
+  box-shadow: none !important;
+  transform: none !important;
+  cursor: default !important;
+  opacity: 1 !important;
+  font-weight: 600 !important;
+}
+
+/* Footer status / notice text */
+.clerk-pricing-container .cl-pricingTableCardFooterNotice,
+.clerk-pricing-container .cl-pricingTableCardStatus,
+.clerk-pricing-container .cl-pricingTableCardStatusRow {
+  color: var(--text-secondary) !important;
 }
 
 /* Subscription panel appear above pricing cards */
@@ -931,106 +1017,10 @@ button[data-variant='unstyled'] *,
   color: #212a3b !important;
 }
 
-/* Card sections have white background */
-.clerk-pricing-table-wrapper [class*='card'] > *,
-.clerk-pricing-table-wrapper > div > div > div > * {
-  background-color: white !important;
-}
-
-/* All buttons */
-.clerk-pricing-table-wrapper button {
-  height: 3rem !important;
-  min-height: 3rem !important;
-  font-size: 1.125rem !important;
-  background-color: #212a3b !important;
-  color: white !important;
-  font-weight: 500 !important;
-  border: none !important;
-  box-shadow: var(--shadow-soft) !important;
-  text-transform: none !important;
-  border-radius: 0.75rem !important;
-  transition: all 0.2s ease !important;
-}
-
-.clerk-pricing-table-wrapper button:hover {
-  background-color: #3d485e !important;
-  box-shadow: var(--shadow-soft-md) !important;
-  transform: translateY(-1px);
-}
-
-/* Current plan button - disabled state */
-.clerk-pricing-table-wrapper button:disabled,
-.clerk-pricing-table-wrapper button[disabled],
-.clerk-pricing-table-wrapper button[aria-disabled='true'] {
-  background-color: #f3e4c7 !important;
-  color: #212a3b !important;
-  cursor: default !important;
-  box-shadow: none !important;
-  opacity: 1 !important;
-  transform: none !important;
-  font-weight: 600 !important;
-}
-
-/* Add accent border to active plan card
-   Note: This uses :first-child which assumes active plan is always first.
-   If Clerk changes the order, this may highlight the wrong card. */
-.cl-pricingTableCard:first-child {
-  border: 2px solid #663820 !important;
-}
-
-/* Style the Active badge with better contrast */
-.cl-badge,
-.cl-pricingTableCard [class*='badge'],
-.cl-pricingTableCard span[class*='Badge'] {
-  background-color: #663820 !important;
-  color: white !important;
-  font-weight: 600 !important;
-  padding: 0.25rem 0.75rem !important;
-  border-radius: 9999px !important;
-}
-
-/* Add "Current Plan" indicator to active plan that doesn't have a button
-   Note: Hardcoded English text - if i18n support is needed, this should be
-   handled in JavaScript with translated strings rendered in the DOM. */
-.cl-pricingTableCard:first-child .cl-pricingTableCardContent::after {
-  content: 'Your Current Plan';
-  display: block;
-  text-align: center;
-  padding: 0.75rem 1.5rem;
-  margin-top: 1rem;
-  background-color: #f3e4c7 !important;
-  color: #212a3b !important;
-  font-weight: 600;
-  border-radius: 0.75rem;
-  font-size: 1.125rem;
-}
-
+/* Pricing table layout — center the grid and cap its width. Colors and
+   card styling live in the themed block above; this is layout only. */
 .clerk-pricing-container {
-  --cl-color-primary: var(--primary);
-  --cl-color-text: var(--foreground);
-  --cl-color-background: var(--background);
   width: 100%;
   max-width: 1000px;
   margin: 0 auto;
 }
-
-/*!* Match the app's existing design system *!*/
-/*.clerk-pricing-container :deep(.cl-pricing-table) {*/
-/*  font-family: var(--font-mona-sans), sans-serif;*/
-/*}*/
-
-/*.clerk-pricing-container :deep(.cl-pricing-table-header) {*/
-/*  font-family: var(--font-ibm-plex-serif), serif;*/
-/*}*/
-
-/*.clerk-pricing-container :deep(.cl-pricing-plan-card) {*/
-/*  border: 2px solid var(--border);*/
-/*  border-radius: 12px;*/
-/*  box-shadow: 4px 4px 0px 0px rgba(0, 0, 0, 1);*/
-/*  transition: transform 0.2s ease;*/
-/*}*/
-
-/*.clerk-pricing-container :deep(.cl-pricing-plan-card:hover) {*/
-/*  transform: translate(-2px, -2px);*/
-/*  box-shadow: 6px 6px 0px 0px rgba(0, 0, 0, 1);*/
-/*}*/
