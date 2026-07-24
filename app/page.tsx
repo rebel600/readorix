@@ -34,7 +34,18 @@ const Page = async ({
         <Search query={searchQuery} />
       </div>
 
-      {books.length > 0 ? (
+      {!bookResults.success ? (
+        // A failed query must not masquerade as an empty library — that would
+        // tell the user to "add a book" when the real problem is on our end.
+        <div className="library-empty-card text-center">
+          <p className="text-(--text-primary) text-lg font-bold">
+            We couldn&rsquo;t load your books
+          </p>
+          <p className="text-(--text-muted) text-sm mt-1">
+            Something went wrong on our end. Please refresh the page to try again.
+          </p>
+        </div>
+      ) : books.length > 0 ? (
         <div className="library-books-grid">
           {books.map((book) => (
             <BookCard
