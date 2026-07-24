@@ -16,8 +16,11 @@ const nextConfig: NextConfig = {
         pathname: "/b/**",
       },
       {
+        // Vercel Blob gives each store its own subdomain (the store ID), which
+        // differs per environment. A single-segment wildcard covers any store
+        // so a new deployment or store doesn't silently break cover images.
         protocol: "https",
-        hostname: "sopdwsdk8oaho5ci.public.blob.vercel-storage.com",
+        hostname: "*.public.blob.vercel-storage.com",
       },
     ],
   },
