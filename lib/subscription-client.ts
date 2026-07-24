@@ -12,8 +12,8 @@ export const useUserPlan = (): PlanType => {
 
     if (!isLoaded || !userId || !has) return PLANS.FREE;
 
-    if (has({ plan: "pro" })) return PLANS.PRO;
-    if (has({ plan: "standard" })) return PLANS.STANDARD;
+    if (has({ plan: PLANS.PRO })) return PLANS.PRO;
+    if (has({ plan: PLANS.STANDARD })) return PLANS.STANDARD;
 
     return PLANS.FREE;
 };
